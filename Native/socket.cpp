@@ -15,16 +15,28 @@ DWORD RecvData(char** DataBuffer) {
 	clientService.sin_addr.s_addr = inet_addr("192.168.186.134");
 	clientService.sin_port = htons(4444);
 	int iResult = 0;
+	INT OnceRecvBytes = 0;
 	INT RecvBytes = 0;
-	char* bufferReceivedBytes = new char[10000];
+	struct timeval timeout = { 3,0 };
+	int ret = setsockopt(ConnectSocket, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof(timeout));
+	char* bufferReceivedBytes = new char[2000000];
+
 	do
 	{
 		iResult = connect(ConnectSocket, (SOCKADDR*)&clientService, sizeof(clientService));
 		Sleep(5);
 
 	} while (iResult == SOCKET_ERROR);
-	RecvBytes = recv(ConnectSocket, bufferReceivedBytes, 10000, NULL);
+
+
+	do
+	{
+		OnceRecvBytes = recv(ConnectSocket, bufferReceivedBytes, 4096, NULL);
+		RecvBytes += OnceRecvBytes;
+		bufferReceivedBytes += OnceRecvBytes;
+	} while (OnceRecvBytes > 0);
+	
 	iResult = closesocket(ConnectSocket);
-	*DataBuffer = bufferReceivedBytes;
+	*DataBuffer = bufferReceivedBytes- RecvBytes;
 	return RecvBytes;
 };
